@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  '/assets/recipes/ghost_bagel.json',
+  '/assets/recipes/ghost_smores.json',
+  '/assets/recipes/mummy_brie.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -19,7 +22,6 @@ window.addEventListener('DOMContentLoaded', init);
 async function init() {
   // fetch the recipes and wait for them to load
   let fetchSuccessful = await fetchRecipes();
-  console.log("loaded");
   // if they didn't successfully load, quit the function
   if (!fetchSuccessful) {
     console.log('Recipe fetch unsuccessful');
@@ -69,12 +71,18 @@ function createRecipeCards() {
 
   // Part 1 Expose - TODO
   const main = document.querySelector('main');
-  for(let i = 0; i < Object.keys(recipeData).length; i++) {
+
+  for(let i = 0; i < recipes.length; i++) {
     const card = document.createElement('recipe-card');
     card.data = recipeData[recipes[i]];
+    if(i > 2) {
+      card.className = "additional";
+      card.style.display = "none";
+    }
     main.appendChild(card);
-    console.log('created card');
   }
+
+  //main.appendChild(moreRecipes);
 }
 
 function bindShowMore() {
@@ -86,4 +94,22 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+  const main = document.querySelector('main');
+  const moreRecipes = document.getElementsByClassName("additional");
+  const button = document.querySelector('button');
+
+  button.addEventListener('click', function(){
+    if(moreRecipes[0].style.display === "none") {
+      for(let i = 0; i < moreRecipes.length; i++) {
+        moreRecipes[i].style.display = "grid";
+      }
+      button.textContent = "Show less";
+    }
+    else {
+      for(let i = 0; i < moreRecipes.length; i++) {
+        moreRecipes[i].style.display = "none";
+      }
+      button.textContent = "Show more";
+    }
+  });
 }
