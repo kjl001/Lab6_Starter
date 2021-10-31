@@ -1,8 +1,9 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
     // You'll want to attach the shadow DOM here
+    this.shadow = this.attachShadow({mode:'open'});
   }
 
   set data(data) {
@@ -83,7 +84,7 @@ class RecipeCard extends HTMLElement {
         font-size: 12px;
       }
     `;
-    styleElem.innerHTML = style;
+    styleElem.innerHTML = styles;
 
     // Here's the root element that you'll want to attach all of your other elements to
     const card = document.createElement('article');
@@ -100,6 +101,85 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+    const thumbnail = document.createElement('img');
+    thumbnail.src = searchForKey(data, "thumbnailUrl");
+    thumbnail.alt = "Recipe Title";
+
+    const title = document.createElement('p');
+    title.className = "title";
+    const aTitle = document.createElement('a');
+    aTitle.href = getUrl(data);
+    aTitle.textContent = searchForKey(data, "headline");
+
+    title.appendChild(aTitle);
+
+    const org = document.createElement('p');
+    org.className = "organization";
+    org.textContent = getOrganization(data);
+    
+    const rating = document.createElement('div');
+    rating.className = "rating";
+
+    if(searchForKey(data, "aggregateRating")) {
+      const ratingVal = document.createElement('span');
+      ratingVal.textContent = searchForKey(data, "ratingValue");
+
+      const ratingImg = document.createElement('img');
+      if(ratingVal.textContent < 1 && ratingVal.textContent >= 0) {
+        ratingImg.src = "/assets/images/icons/0-star.svg";
+        ratingImg.alt = "0 stars";
+      }
+      else if(ratingVal.textContent < 2 && ratingVal.textContent >= 1) {
+        ratingImg.src = "/assets/images/icons/1-star.svg";
+        ratingImg.alt = "1 star";
+      }
+      else if(ratingVal.textContent < 3 && ratingVal.textContent >= 2) {
+        ratingImg.src = "/assets/images/icons/2-star.svg";
+        ratingImg.alt = "2 stars";
+      }
+      else if(ratingVal.textContent < 4 && ratingVal.textContent >= 3) {
+        ratingImg.src = "/assets/images/icons/3-star.svg";
+        ratingImg.alt = "3 stars";
+      }
+      else if(ratingVal.textContent < 5 && ratingVal.textContent >= 4) {
+        ratingImg.src = "/assets/images/icons/4-star.svg";
+        ratingImg.alt = "4 stars";
+      }
+      else {
+        ratingImg.src = "/assets/images/icons/5-star.svg";
+        ratingImg.alt = "5 stars";
+      }
+
+      const rateCount = document.createElement('span');
+      rateCount.textContent = searchForKey(data, "ratingCount");
+
+      rating.appendChild(ratingVal);
+      rating.appendChild(ratingImg);
+      rating.appendChild(rateCount);
+    }
+    else {
+      const noRating = document.createElement('span');
+      noRating.textContent = "No Reviews";
+
+      rating.appendChild(noRating);
+    }
+
+    const time = document.createElement('time');
+    time.textContent = convertTime(searchForKey(data, "totalTime"));
+
+    const ingredients = document.createElement('p');
+    ingredients.className = "ingredients";
+    ingredients.textContent = createIngredientList(searchForKey(data, "recipeIngredient"));
+
+    card.appendChild(thumbnail);
+    card.appendChild(title);
+    card.appendChild(org);
+    card.appendChild(rating);
+    card.appendChild(time);
+    card.appendChild(ingredients);
+
+    this.shadow.appendChild(card);
+    this.shadow.appendChild(styleElem);
   }
 }
 
